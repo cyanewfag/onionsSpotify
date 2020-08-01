@@ -3,15 +3,15 @@ var musicTable = [
     [ "Test Song 2", "unknown", "test.wav", 180, 0, false ]
 ];
 
-/*
- * Auto Generated Information
-*/
-
 var options = [
     [ "onion_autoplay", false ],
     [ "onion_shuffle", false ],
     [ "onion_music_path", "C:\\Users\\Username\\Documents\\music\\" ]
 ];
+
+/*
+ * Auto Generated Information
+*/
 
 var fonts = [
     [ "Arial", Render.AddFont("Arial", 10, 600) ],
