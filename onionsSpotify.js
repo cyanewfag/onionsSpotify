@@ -19,9 +19,9 @@ var fonts = [
 ];
 
 // skipped items, scrollbar item offset
-var scrollBar = [ 0, 0 ]
+var scrollBar = [ 0, 0 ];
 // x pos, y pos, width, height, name, unknown, mouse x, mouse y, mouse down, mouse down x, mouse down y, mouse down gui x, mouse down gui y, mouse down style, enabled
-var main = [ 100, 100, 1150, 600, "Onion's Spotify", false, 0, 0, false, 0, 0, 0, 0, 0, true ];
+var main = [ 100, 100, 1150, 600, "Onion's Spotify", false, 0, 0, false, 0, 0, 0, 0, 0 ];
 var cachedTime = Globals.Realtime();
 var buttonTime = Globals.Realtime();
 var currentlyPlaying = false;
@@ -29,6 +29,12 @@ var songTime = 0;
 var currentTime = 0;
 var songName = "";
 var songAuthor = "";
+var currentSongIndex = 0;
+// x pos, y pos, w, h, style, mouse down x, mouse down y
+var hudInfo = [ 100, 100, 250, 45, 0, 0, 0 ]
+UI.AddHotkey("Menu Key");
+UI.AddCheckbox( "Auto-Play" );
+UI.AddCheckbox( "Shuffle" );
 
 function returnSongTime(time)
 {
@@ -143,6 +149,7 @@ function drawSongs()
                                 Sound.Play(options[2][1] + musicTable[i][2]);
                                 updateSong(true, 0, musicTable[i][0]);
                                 currentlyPlaying = true;
+                                currentSongIndex = i;
                             }
                         }
                 }
@@ -162,23 +169,6 @@ function drawSongs()
 
 function drawMenu()
 {
-    var cursorPosition = Input.GetCursorPosition();
-    main[6] = cursorPosition[0];
-    main[7] = cursorPosition[1];
-
-    if (!main[8] && Input.IsKeyPressed(0x01))
-    {
-        main[8] = true;
-        main[9] = main[6]; // Mouse Down X POS
-        main[10] = main[7]; // Mouse Down Y POS
-        main[11] = main[0]; // Mouse Down GUI X POS
-        main[12] = main[1]; // Mouse Down GUI Y POS
-    }
-    else if (main[8] && !Input.IsKeyPressed(0x01)){
-        main[8] = false;
-        main[13] = 0;
-    }
-
     if (main[13] == 0)
         if ( main[8] && 
             main[9] > main[11] && main[9] <= main[11] + main[2] // If the initial click was within the GUI on the x axis
@@ -220,7 +210,8 @@ function drawMenu()
     var text_width = Render.TextSize(main[4], 4);
     Render.String( main[0] + 188 + text_width[1], main[1] + 104 - text_width[1], 0, main[4], [ 255, 255, 255, 255 ], 4 );
     Render.FilledRect(main[0] + 173, main[1] + 99 - text_width[1], text_width[1] + 10, text_width[1] + 10, [40, 40, 40, 255]);
-    Render.FilledRect(main[0] + 174, main[1] + 100 - text_width[1], text_width[1] + 8, text_width[1] + 8, [18, 18, 18, 255]);
+    icon = Render.AddTexture("ot/scripts/bigboytoys.jpg");
+    Render.TexturedRect(main[0] + 174, main[1] + 100 - text_width[1], text_width[1] + 8, text_width[1] + 8, icon);
     Render.FilledRect(main[0] + (main[2] / 2) - 210, main[1] + main[3] - 36, 420, 4, [64, 64, 64, 255]);
     if ((currentTime / songTime) != 1)
         Render.FilledRect(main[0] + (main[2] / 2) - 210, main[1] + main[3] - 36, (currentTime / songTime) * 420, 4, [128, 128, 128, 255]);
@@ -230,13 +221,6 @@ function drawMenu()
     Render.FilledRect(main[0] + 14, main[1] + main[3] - 57, 44, 44, [40, 40, 40, 255]);
 
     if (currentlyPlaying) {
-        if (cachedTime + 0.5 <= Globals.Realtime()) {
-            updateSong(false, 0.5, "");
-
-            if (currentTime == songTime)
-                updateSong(true, 0, songName);
-        }
-
         var text_width = Render.TextSize(returnSongTime(currentTime), 8);
         Render.String(main[0] + (main[2] / 2) - 215 - text_width[0], main[1] + main[3] - 32 - (text_width[1] / 2), 0, returnSongTime(currentTime), [ 255, 255, 255, 255 ], 8 );
         var text_width = Render.TextSize(returnSongTime(songTime), 8);
@@ -274,23 +258,98 @@ function drawMenu()
     }
 }
 
-function drawGUI()
+function drawHud()
 {
-    if (Globals.Realtime() - buttonTime >= 0.35)
-    {
-        if (Input.IsKeyPressed(0x4D))
+    Render.FilledRect(hudInfo[0], hudInfo[1], hudInfo[2], hudInfo[3], [18, 18, 18, 235]);
+    Render.FilledRect(hudInfo[0] + 2, hudInfo[1] + 2, hudInfo[2] - 4, 2, [29, 200, 90, 255]);
+    Render.String(hudInfo[0] + 2 + (hudInfo[2] / 2), hudInfo[1] + 10, 1, songName, [ 255, 255, 255, 255 ], 8 );
+
+    Render.FilledRect(hudInfo[0] + 14, hudInfo[1] + hudInfo[3] - 10, hudInfo[2] - 28, 4, [40, 40, 40, 255]);
+    if ((currentTime / songTime) != 1)
+        Render.FilledRect(hudInfo[0] + 14, hudInfo[1] + hudInfo[3] - 10, (currentTime / songTime) * (hudInfo[2] - 28), 4, [128, 128, 128, 255]);
+    else
+        Render.FilledRect(hudInfo[0] + 14, hudInfo[1] + hudInfo[3] - 10, hudInfo[2] - 28, 4, [128, 128, 128, 255]);
+
+    Render.String(hudInfo[0] + 14 + ((currentTime / songTime) * (hudInfo[2] - 28)), hudInfo[1] + hudInfo[3] - 24, 1, returnSongTime(currentTime), [ 255, 255, 255, 255 ], 8 );
+
+    if (hudInfo[4] == 0)
+        if ( main[8] && 
+            main[9] > hudInfo[0] && main[9] <= hudInfo[0] + hudInfo[2] // If the initial click was within the GUI on the x axis
+            && main[10] > hudInfo[1] && main[10] <= hudInfo[1] + hudInfo[3] ) // If the initial click was within the GUI on the y axis
         {
-            buttonTime = Globals.Realtime();
-            main[14] = !main[14];
+            if (main[9] > (hudInfo[0] + hudInfo[2]) - 16 && main[10] > (hudInfo[1] + hudInfo[3]) - 16)
+                hudInfo[4] = 2; // Click state is resizing
+            else
+                hudInfo[4] = 1; // Click state is dragging
         }
+
+
+    if (hudInfo[4] == 2 && main[8])
+    {
+        if (main[6] - hudInfo[0] >= 250)
+            hudInfo[2] = main[6] - hudInfo[0];
+        else
+            hudInfo[2] = 250;
+
+        if (main[7] - hudInfo[1] >= 45)
+            hudInfo[3] = main[7] - hudInfo[1];
+        else
+            hudInfo[3] = 45;
     }
 
-    if (main[14])
+    if (hudInfo[4] == 1 && main[8])
+    {
+        hudInfo[0] = main[6] - (main[9] - hudInfo[5]);
+        hudInfo[1] = main[7] - (main[10] - hudInfo[6]);
+
+        main[0] = main[6] - (main[9] - main[11]);
+        main[1] = main[7] - (main[10] - main[12]);
+    }
+}
+
+function eventManager()
+{
+    var cursorPosition = Input.GetCursorPosition();
+    main[6] = cursorPosition[0];
+    main[7] = cursorPosition[1];
+
+    if (!main[8] && Input.IsKeyPressed(0x01))
+    {
+        main[8] = true;
+        main[9] = main[6]; // Mouse Down X POS
+        main[10] = main[7]; // Mouse Down Y POS
+        main[11] = main[0]; main[12] = main[1]; // GUI Mouse Down POS
+        hudInfo[5] = hudInfo[0]; hudInfo[6] = hudInfo[1]; // HUD Mouse Down POS
+    }
+    else if (main[8] && !Input.IsKeyPressed(0x01)){
+        main[8] = false;
+        main[13] = 0;
+        hudInfo[4] = 0;
+    }
+
+    if (currentlyPlaying)
+        if (cachedTime + 0.5 <= Globals.Realtime()) {
+            updateSong(false, 0.5, ""); 
+        if (currentTime == songTime)
+        {
+            updateSong(true, 0, songName);
+            currentlyPlaying = false;
+        }
+    }
+}
+
+function drawGUI()
+{
+    eventManager();
+
+    if (UI.IsHotkeyActive("Misc", "JAVASCRIPT", "Script items", "Menu Key"))
     {
         drawMenu();
         drawSongs();
         songStepper();
     }
+    else if (currentlyPlaying)
+        drawHud();
 }
 
 Cheat.RegisterCallback("Draw", "drawGUI");
