@@ -329,8 +329,28 @@ function eventManager()
             updateSong(false, 0.5, ""); 
         if (currentTime == songTime)
         {
-            updateSong(true, 0, songName);
-            currentlyPlaying = false;
+            if (UI.GetValue("Misc", "JAVASCRIPT", "Script items", "Auto-Play"))
+            {
+                if (!UI.GetValue("Misc", "JAVASCRIPT", "Script items", "Shuffle")){
+                    if (currentSongIndex != musicTable.length)
+                    {
+                        currentSongIndex++;
+                        Sound.Play(options[2][1] + musicTable[currentSongIndex][2]);
+                        updateSong(true, 0, musicTable[currentSongIndex][0]);
+                        currentlyPlaying = true;
+                    }
+                } else
+                {
+                    currentSongIndex = Math.floor(Math.random() * (musicTable.length + 1));
+                    Sound.Play(options[2][1] + musicTable[currentSongIndex][2]);
+                    updateSong(true, 0, musicTable[currentSongIndex][0]);
+                    currentlyPlaying = true;
+                }
+            } else
+            {
+                updateSong(true, 0, songName);
+                currentlyPlaying = false;
+            }
         }
     }
 }
