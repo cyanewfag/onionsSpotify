@@ -140,7 +140,7 @@ function drawSongs()
                             if (Input.IsKeyPressed(0x01))
                             {
                                 buttonTime = Globals.Realtime();
-                                Sound.Play(options[3][1] + musicTable[i][2]);
+                                Sound.Play(options[2][1] + musicTable[i][2]);
                                 updateSong(true, 0, musicTable[i][0]);
                                 currentlyPlaying = true;
                             }
@@ -289,7 +289,7 @@ function drawGUI()
     {
         drawMenu();
         drawSongs();
-        drawScrollbar();
+        songStepper();
     }
 }
 
