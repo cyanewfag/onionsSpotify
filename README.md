@@ -1,5 +1,5 @@
 # onionsSpotify
-
+You will be mind fucked reading the code, and yes I know there are a ton of unused variables in the tables, I kept changing my mind on how I wanted to do things and I couldn't be asked to fix it.
 Menu key is M, the volume is uncontrollable due to onetaps api, to change it you have to change CS:GO's master volume in the volume mixer of windows.
 
 Change this line
