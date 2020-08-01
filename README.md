@@ -1,16 +1,14 @@
 # onionsSpotify
 
+Menu key is M, the volume is uncontrollable due to onetaps api, to change it you have to change CS:GO's master volume in the volume mixer of windows.
+
 Change this line
 [ "onion_music_path", "C:\\Users\\Username\\Documents\\music\\" ]
 to whatever your music path is ex:
 [ "onion_music_path", "C:\\Users\\Username\\Documents\\peepeejuice\\" ]
 [ "onion_music_path", "C:\\Users\\Username\\Music\\music\\" ]
 
-Run the release generator or manually add the lines to the initial table to add songs
-When using the generator select the folder you have set as your path, and make sure
-your songs are .wav format.
-It will auto generate a table and put it in your clipboard, all you have to do
-after that is replace the initial table with your own.
+Run the release generator or manually add the lines to the initial table to add songs. When using the generator select the folder you have set as your path, and make sure your songs are .wav format. It will auto generate a table and put it in your clipboard, all you have to do after that is replace the initial table with your own.
 
 Ex:
 
