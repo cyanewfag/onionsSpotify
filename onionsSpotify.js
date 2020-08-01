@@ -301,9 +301,6 @@ function drawHud()
     {
         hudInfo[0] = main[6] - (main[9] - hudInfo[5]);
         hudInfo[1] = main[7] - (main[10] - hudInfo[6]);
-
-        main[0] = main[6] - (main[9] - main[11]);
-        main[1] = main[7] - (main[10] - main[12]);
     }
 }
 
